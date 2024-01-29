@@ -6,7 +6,7 @@ const folderPath = `${process.cwd()}/src/fs/`;
 
 const copy = async () => {
     try {
-        const copyDir = await mkdir(folderPath + folderCopyName);
+        await mkdir(folderPath + folderCopyName);
 
         const filesToCopy = await readdir(folderPath + folderName)
             .then((files) => {
