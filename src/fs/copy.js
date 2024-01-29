@@ -1,17 +1,20 @@
 import { readdir, mkdir, copyFile } from 'node:fs/promises';
+import FsOperationFailedError from '../utils/fs-operation-failed.error.js';
+import { getDirNameFromUrl } from '../utils/path.utils.js';
+import * as path from 'path';
 
-const folderCopyName = 'files_copy';
-const folderName = 'files';
-const folderPath = `${process.cwd()}/src/fs/`;
+const scriptDir = getDirNameFromUrl(import.meta.url);
+const destinationDir = path.join(scriptDir, 'files_copy');
+const sourceDir = path.join(scriptDir, 'files');
 
 const copy = async () => {
     try {
-        await mkdir(folderPath + folderCopyName);
+        await mkdir(destinationDir);
 
-        const filesToCopy = await readdir(folderPath + folderName)
+        const filesToCopy = await readdir(sourceDir)
             .then((files) => {
                 return files.map((file) => {
-                    return copyFile(`${folderPath}${folderName}/${file}`, `${folderPath}${folderCopyName}/${file}`);
+                    return copyFile(path.join(sourceDir, file), path.join(destinationDir, file));
                 });
             });
 
@@ -20,7 +23,7 @@ const copy = async () => {
                 console.log('Folder and files has successfully copied!');
             });
     } catch {
-        console.log('FS operation failed');
+        throw new FsOperationFailedError();
     }
 };
 
